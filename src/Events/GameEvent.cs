@@ -16,19 +16,12 @@ public class GameEvent(BasicFaceitServer core)
     {
         core.RegisterEventHandler<EventRoundStart>(OnRoundStart);
         core.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
-        core.RegisterEventHandler<EventRoundOfficiallyEnded>(OnEventRoundOfficiallyEnded);
         core.RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
         core.RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
         core.RegisterEventHandler<EventRoundAnnounceMatchStart>(OnRoundAnnounceMatchStart);
-        core.RegisterEventHandler<EventStartHalftime>(OnStartHalftime);
+        core.RegisterEventHandler<EventMapShutdown>(OnMapShutdown);
         core.RegisterEventHandler<EventBombPlanted>(OnEventBombPlanted);
-        core.RegisterEventHandler<EventGameStart>(OnEventGameStart);
         core.RegisterEventHandler<EventPlayerDeath>(OnEventPlayerDeath);
-    }
-
-    private HookResult OnEventRoundOfficiallyEnded(EventRoundOfficiallyEnded @event, GameEventInfo info)
-    {
-        return HookResult.Continue;
     }
 
     private HookResult OnEventPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
@@ -117,7 +110,7 @@ public class GameEvent(BasicFaceitServer core)
             MyLogger.Info($"Team name 1 - {teamName1}");
             MyLogger.Info($"Team name 2 - {teamName2}");
 
-            var knifeWinner = _gameController.GetKnifeWinnerTeam();
+            var knifeWinner = _helper.GetKnifeWinnerTeam();
             if (knifeWinner == CsTeam.None)
                 return HookResult.Continue;
 
@@ -185,13 +178,9 @@ public class GameEvent(BasicFaceitServer core)
         return HookResult.Continue;
     }
 
-    private HookResult OnStartHalftime(EventStartHalftime @event, GameEventInfo info)
+    private HookResult OnMapShutdown(EventMapShutdown @event, GameEventInfo info)
     {
-        return HookResult.Continue;
-    }
-
-    private HookResult OnEventGameStart(EventGameStart @event, GameEventInfo info)
-    {
+        Server.PrintToChatAll(@event.EventName);
         return HookResult.Continue;
     }
 

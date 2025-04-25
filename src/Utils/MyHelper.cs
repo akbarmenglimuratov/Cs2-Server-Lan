@@ -239,7 +239,7 @@ public class MyHelper(BasicFaceitServer core)
 
         MyLogger.Info($"Team1 - {team1.Name}");
         MyLogger.Info($"Team2 - {team2.Name}");
-        SetTeamName(core.GameController.GetTeam(1), core.GameController.GetTeam(2));
+        SetTeamName(core.GameController.Teams.Team1, core.GameController.Teams.Team2);
     }
 
     private void SetTeams(Team team1, Team team2)
@@ -248,7 +248,7 @@ public class MyHelper(BasicFaceitServer core)
         core.GameController.Teams.Team2 = new TeamData(team2.Id, team2.Name);
     }
 
-    public void SetTeamName(TeamData ctTeam, TeamData tTeam)
+    private void SetTeamName(TeamData ctTeam, TeamData tTeam)
     {
         Server.NextFrame(() =>
         {
@@ -262,6 +262,11 @@ public class MyHelper(BasicFaceitServer core)
         return Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules")
             .First()
             .GameRules;
+    }
+
+    public CsTeam GetKnifeWinnerTeam()
+    {
+        return core.GameController.KnifeWinnerTeam;
     }
 
     public string GetColoredText(string message)

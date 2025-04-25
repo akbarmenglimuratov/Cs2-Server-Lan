@@ -36,7 +36,7 @@ public class MyCommands(BasicFaceitServer core)
 
         if (player == null || !player.IsValid) return;
 
-        var knifeWinnerTeam = _gameController.GetKnifeWinnerTeam();
+        var knifeWinnerTeam = _helper.GetKnifeWinnerTeam();
         
         MyLogger.Debug($"On command execute: !ct - Player team: {player.Team}");
         if (player.Team != knifeWinnerTeam || player.Team == CsTeam.Spectator) return;
@@ -59,7 +59,7 @@ public class MyCommands(BasicFaceitServer core)
 
         if (player == null || !player.IsValid) return;
 
-        var knifeWinnerTeam = _gameController.GetKnifeWinnerTeam();
+        var knifeWinnerTeam = _helper.GetKnifeWinnerTeam();
         
         MyLogger.Debug($"On command execute: !t - Player team: {player.Team}");
         if (player.Team != knifeWinnerTeam || player.Team == CsTeam.Spectator) return;

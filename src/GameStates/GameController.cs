@@ -8,7 +8,8 @@ namespace BasicFaceitServer.GameStates;
 
 public class GameController(BasicFaceitServer core)
 {
-    private CsTeam _knifeWinnerTeam = CsTeam.None;
+    public CsTeam KnifeWinnerTeam = CsTeam.None;
+
     public readonly Teams Teams = new();
     private readonly MyHelper _helper = core.Helper;
     private readonly GameUtils _game = core.GameUtils;
@@ -91,12 +92,7 @@ public class GameController(BasicFaceitServer core)
     public void SetKnifeWinnerTeam(CsTeam winner)
     {
         MyLogger.Info($"Define knife round winner: {winner.ToString()}");
-        _knifeWinnerTeam = winner;
-    }
-
-    public CsTeam GetKnifeWinnerTeam()
-    {
-        return _knifeWinnerTeam;
+        KnifeWinnerTeam = winner;
     }
 
     private void UpdateGamePhase(GamePhase value)
@@ -115,16 +111,6 @@ public class GameController(BasicFaceitServer core)
 
         core.MatchState = value;
         MyLogger.Info("Match state updated");
-    }
-
-    public TeamData GetTeam(int teamNumber)
-    {
-        return teamNumber switch
-        {
-            1 => Teams.Team1,
-            2 => Teams.Team2,
-            _ => new TeamData(teamNumber, "default")
-        };
     }
 
     public void ShowOrganizerMessage()
