@@ -11,7 +11,7 @@ public class GameEvent(BasicFaceitServer core)
     private readonly GameController _gameController = core.GameController;
     private readonly GameUtils _gameUtils = core.GameUtils;
     private readonly MyHelper _helper = core.Helper;
-    
+
     public void Load()
     {
         core.RegisterEventHandler<EventRoundStart>(OnRoundStart);
@@ -28,7 +28,6 @@ public class GameEvent(BasicFaceitServer core)
 
     private HookResult OnEventRoundOfficiallyEnded(EventRoundOfficiallyEnded @event, GameEventInfo info)
     {
-        core.ShowBombTimer = false;
         return HookResult.Continue;
     }
 
@@ -63,14 +62,14 @@ public class GameEvent(BasicFaceitServer core)
         if (_gameUtils.IsMatchLive()) return HookResult.Continue;
 
         var players = _helper.GetPlayers();
-        
+
         if (_gameUtils.IsKnife())
         {
             MyLogger.Debug($"Knife round started. Skip team intro");
 
             // var gameRules = _helper.GetGameRules();
             // gameRules!.TeamIntroPeriod = false;
-            
+
             foreach (var player in players)
                 _helper.PreparePlayerForKnifeRound(player);
 
@@ -85,28 +84,26 @@ public class GameEvent(BasicFaceitServer core)
         MyLogger.Info("Finish");
         return HookResult.Continue;
     }
-    
+
     private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
         MyLogger.Info($"Start");
-        
-        core.ShowBombTimer = false;
-        
+
         if (_gameUtils.IsMatchLive()) return HookResult.Continue;
 
         if (_gameUtils.IsKnife())
         {
-            var knifeWinner = @event.Winner == (byte) CsTeam.CounterTerrorist
+            var knifeWinner = @event.Winner == (byte)CsTeam.CounterTerrorist
                 ? CsTeam.CounterTerrorist
                 : CsTeam.Terrorist;
             _gameController.SetKnifeWinnerTeam(knifeWinner);
             _gameController.StartPostKnifeWarmup();
         }
-        
+
         MyLogger.Info($"Finish");
         return HookResult.Continue;
     }
-    
+
     private HookResult OnRoundAnnounceWarmup(EventRoundAnnounceWarmup @event, GameEventInfo info)
     {
         if (_gameUtils.IsPreWarmup()) return HookResult.Continue;
@@ -114,7 +111,7 @@ public class GameEvent(BasicFaceitServer core)
         if (_gameUtils.IsPostWarmup())
         {
             MyLogger.Debug($"Post knife warmup period started");
-            
+
             var teamName1 = _gameController.Teams.Team1.Name;
             var teamName2 = _gameController.Teams.Team2.Name;
             MyLogger.Info($"Team name 1 - {teamName1}");
@@ -123,7 +120,7 @@ public class GameEvent(BasicFaceitServer core)
             var knifeWinner = _gameController.GetKnifeWinnerTeam();
             if (knifeWinner == CsTeam.None)
                 return HookResult.Continue;
-            
+
             var winnerTeamName = knifeWinner == CsTeam.CounterTerrorist
                 ? teamName1
                 : teamName2;
@@ -134,13 +131,14 @@ public class GameEvent(BasicFaceitServer core)
 
             MyLogger.Info($"Finish");
         }
+
         return HookResult.Continue;
     }
-    
+
     private HookResult OnWarmupEnd(EventWarmupEnd @event, GameEventInfo info)
     {
         MyLogger.Info("Start");
-        
+
         if (_gameUtils.IsPreWarmup())
         {
             MyLogger.Info("Pre-knife warmup period ended");
@@ -151,9 +149,9 @@ public class GameEvent(BasicFaceitServer core)
                 MyLogger.Debug($"Players ({players.Count}) count is below {core.Config.MinPlayerToStart}");
                 _gameController.PauseMatch();
             }
-            
+
             _gameController.StartKnife();
-            
+
             return HookResult.Continue;
         }
 
@@ -166,11 +164,11 @@ public class GameEvent(BasicFaceitServer core)
         MyLogger.Info("End");
         return HookResult.Continue;
     }
-    
+
     private HookResult OnRoundAnnounceMatchStart(EventRoundAnnounceMatchStart @event, GameEventInfo info)
     {
         MyLogger.Info("Start");
-        
+
         if (_gameUtils.IsKnife())
         {
             MyLogger.Info($"Print knife round start message to each player");
@@ -182,32 +180,28 @@ public class GameEvent(BasicFaceitServer core)
             MyLogger.Info($"Print Good luck message");
             _helper.PrintToChatAll("Ҳаммеге аўмет!!!");
         }
-        
+
         MyLogger.Info("End");
         return HookResult.Continue;
     }
-    
+
     private HookResult OnStartHalftime(EventStartHalftime @event, GameEventInfo info)
     {
-        // _helper.SetTeamName(_gameController.Teams.Team2, _gameController.Teams.Team1);
         return HookResult.Continue;
     }
-    
+
     private HookResult OnEventGameStart(EventGameStart @event, GameEventInfo info)
     {
-        Server.PrintToChatAll("Game start");
         return HookResult.Continue;
     }
-    
+
     private HookResult OnEventBombPlanted(EventBombPlanted @event, GameEventInfo info)
     {
         MyLogger.Info("Start");
 
-        _gameController.StartBombCountDown();
-        
         info.DontBroadcast = true;
         _helper.PrintToCenterAlertAll("Бомба койылды. Жарылыўына 40 секунд бар");
-        
+
         MyLogger.Info("End");
         return HookResult.Continue;
     }

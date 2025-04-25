@@ -22,21 +22,17 @@ public class GameListener(BasicFaceitServer core)
 
     private void OnTick()
     {
-        if (core.ShowBombTimer)
-            Utilities
-                .GetPlayers()
-                .Where(player => player is { IsValid: true, Team: CsTeam.Spectator })
+        if (core.MatchBeingPlayedIn)
+            core.Helper.GetPlayers()
                 .ToList()
-                .ForEach(OnTickPrintBombTimer);
+                .ForEach(OnMatchBeingPlayedIn);
     }
     
-    private void OnTickPrintBombTimer(CCSPlayerController spectator)
+    private void OnMatchBeingPlayedIn(CCSPlayerController player)
     {
-        var timerColor = $"<font class='fontSize-m' color='green'>{_gameController.BombTimer}</font>";
-        if (_gameController.C4Time <= 10.0f)
-            timerColor = $"<font class='fontSize-m' color='red'>{_gameController.BombTimer}</font>";
-        
-        spectator.PrintToCenterHtml($"<font color='white'>Бомба жарылыуына: {timerColor} сек. </font>");
+        var imgPath = Path.Combine(core.ModuleDirectory, "F9jJeIw3percent.png");
+        string organizer = $"<font class='fontSize-m' color='red'>Организатор турнира</font><br><img src='{imgPath}' width='64' height='64'/>";
+        player.PrintToCenterHtml($"{organizer}");
     }
     
     private void OnServerHibernationUpdate(bool isHibernating)

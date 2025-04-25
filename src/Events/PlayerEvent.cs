@@ -101,9 +101,11 @@ public class PlayerEvent(BasicFaceitServer core)
 
         if (_gameUtils.IsKnife() || _gameUtils.IsMatchLive())
         {
-            MyLogger.Debug($"Player disconnected. Match will be paused - {player.IpAddress}");
-            if (new[] { CsTeam.Spectator, CsTeam.None }.Contains(player.Team))
+            if (!new[] { CsTeam.Spectator, CsTeam.None }.Contains(player.Team))
+            {
+                MyLogger.Debug($"Player disconnected. Match will be paused - {player.IpAddress}");
                 _gameController.PauseMatch();
+            }
         }
 
         MyLogger.Info($"Player disconnected- {player.IpAddress}");

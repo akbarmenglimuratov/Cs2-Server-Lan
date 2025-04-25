@@ -30,8 +30,8 @@ public class BasicFaceitServer : BasePlugin
     private readonly ConfigManager _configManager;
     public MyConfigs Config { get; private set; } = new();
 
-    public bool ShowBombTimer = false;
-    
+    public bool MatchBeingPlayedIn = false;
+
     public BasicFaceitServer()
     {
         _configManager = new ConfigManager(this);
@@ -42,7 +42,6 @@ public class BasicFaceitServer : BasePlugin
         GameEvents = new GameEvent(this);
         Commands = new MyCommands(this);
         GameListeners = new GameListener(this);
-
     }
 
     public override void Load(bool hotReload)
@@ -62,7 +61,7 @@ public class BasicFaceitServer : BasePlugin
         GameController.Load();
         Commands.Load();
         GameListeners.Load();
-        
+
         MyLogger.Info("End plugin load");
     }
 }

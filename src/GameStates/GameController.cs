@@ -14,9 +14,6 @@ public class GameController(BasicFaceitServer core)
     private readonly GameUtils _game = core.GameUtils;
 
     private Timer? _c4Countdown;
-    public float C4Time = 40.0f;
-    public float timeRemainder  = 0.0f;
-    public string BombTimer;
 
     public void Load()
     {
@@ -42,15 +39,16 @@ public class GameController(BasicFaceitServer core)
             var gameRules = _helper.GetGameRules();
             gameRules!.WarmupPeriod = false;
         }
+
         Server.ExecuteCommand("mp_give_player_c4 0");
-        
+
         UpdateGamePhase(GamePhase.Knife);
     }
 
     public void StartPostKnifeWarmup()
     {
         MyLogger.Info("Start post knife warmup phase");
-        
+
         core.AddTimer(3.0f, () =>
         {
             MyLogger.Debug($"Post knife warmup time: {core.Config.PostWarmupTime}");
@@ -65,12 +63,13 @@ public class GameController(BasicFaceitServer core)
     {
         MyLogger.Info("Start live match");
         MyLogger.Info("Exec gamemode_competitive, restart game (1 sec)");
-        
+
         if (_game.IsWarmup())
         {
             var gameRules = _helper.GetGameRules();
             gameRules!.WarmupPeriod = false;
         }
+
         Server.ExecuteCommand("exec gamemode_competitive; mp_restartgame 1;");
         UpdateGamePhase(GamePhase.MatchLive);
     }
@@ -81,7 +80,7 @@ public class GameController(BasicFaceitServer core)
         Server.ExecuteCommand("mp_pause_match");
         UpdateMatchState(MatchState.Paused);
     }
-    
+
     public void UnpauseMatch()
     {
         MyLogger.Info($"Unpause match - {_game.GetCurrentGameState().ToString()}");
@@ -94,12 +93,12 @@ public class GameController(BasicFaceitServer core)
         MyLogger.Info($"Define knife round winner: {winner.ToString()}");
         _knifeWinnerTeam = winner;
     }
-    
+
     public CsTeam GetKnifeWinnerTeam()
     {
         return _knifeWinnerTeam;
     }
-    
+
     private void UpdateGamePhase(GamePhase value)
     {
         MyLogger.Info($"Updating game phase to - {value.ToString()}");
@@ -128,21 +127,21 @@ public class GameController(BasicFaceitServer core)
         };
     }
 
-    public void StartBombCountDown()
+    public void ShowOrganizerMessage()
     {
-        core.ShowBombTimer = true;
-        C4Time = 40.0f;
-        
-        _c4Countdown = core.AddTimer(1.0f, () => {
-            if (C4Time <= 0)
+        core.MatchBeingPlayedIn = true;
+        var showTime = 10.0f;
+
+        _c4Countdown = core.AddTimer(1.0f, () =>
+        {
+            if (showTime <= 0)
             {
-                core.ShowBombTimer = false;
+                core.MatchBeingPlayedIn = false;
                 _c4Countdown?.Kill();
                 return;
             }
-            C4Time -= 1.0f;
+
+            showTime -= 1.0f;
         }, TimerFlags.REPEAT);
-        
-        
     }
 }

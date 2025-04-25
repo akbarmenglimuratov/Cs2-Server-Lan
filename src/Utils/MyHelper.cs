@@ -20,7 +20,7 @@ public class MyHelper(BasicFaceitServer core)
         "weapon_decoy", "weapon_flashbang", "weapon_hegrenade", "weapon_incgrenade", "weapon_molotov",
         "weapon_smokegrenade", "item_defuser", "item_cutters", "weapon_knife"
     };
-    
+
     public void PrintToChat(CCSPlayerController player, string message)
     {
         var coloredText = $"{{green}}[{core.Config.Tournament.Host}]{{white}}: {message}";
@@ -31,45 +31,39 @@ public class MyHelper(BasicFaceitServer core)
     {
         var players = GetPlayers();
         foreach (var player in players)
-            Server.NextFrame(() =>
-            {
-                player.PrintToCenterHtml(message, 10);
-            });
+            Server.NextFrame(() => { player.PrintToCenterHtml(message, 10); });
     }
 
-public void PrintToCenter(CCSPlayerController player, string message, float delay = 0.0f)
+    public void PrintToCenter(CCSPlayerController player, string message, float delay = 0.0f)
     {
         if (delay > 0.0f)
             core.AddTimer(delay, () => player.PrintToCenter(message));
-        else 
+        else
             player.PrintToCenter(message);
     }
-    
+
     public void PrintToChatAll(string message)
     {
         var coloredText = $"{{green}}[{core.Config.Tournament.Host}]{{white}}: {message}";
         Server.PrintToChatAll(GetColoredText(coloredText));
     }
-    
+
     public void PrintToCenterAll(string message)
     {
         var players = GetPlayers();
         foreach (var player in players)
             player.PrintToCenter(message);
     }
-    
+
     public void PrintToCenterAlertAll(string message)
     {
-        var players = GetPlayers(includeSpec:true);
+        var players = GetPlayers(includeSpec: true);
         foreach (var player in players)
         {
-            Server.NextFrame(() =>
-            {
-                player.PrintToCenterAlert(message);
-            });
+            Server.NextFrame(() => { player.PrintToCenterAlert(message); });
         }
     }
-    
+
     public bool CheckIpInParticipantsList(string playerIpAddress)
     {
         MyLogger.Info($"Check if player in participants list - {playerIpAddress}");
@@ -94,8 +88,7 @@ public void PrintToCenter(CCSPlayerController player, string message, float dela
         var playerList = Utilities
             .FindAllEntitiesByDesignerName<CCSPlayerController>("cs_player_controller")
             .Where(player =>
-                player.IsValid
-                && (player is { IsBot: false, IsHLTV: false })
+                player is { IsValid: true, IsBot: false }
                 && (includeTeam == null || player.Team == includeTeam)
                 && player.Team != CsTeam.None
                 && (includeSpec || player.Team != CsTeam.Spectator)
@@ -137,9 +130,9 @@ public void PrintToCenter(CCSPlayerController player, string message, float dela
         core.AddTimer(0.1f, () =>
         {
             player.ChangeTeam(CsTeam.Spectator);
-            
+
             if (playerTeam == CsTeam.Spectator) return;
-            
+
             player.Respawn();
             core.AddTimer(0.1f, () => { player.ChangeTeam(playerTeam); });
         });
@@ -204,7 +197,7 @@ public void PrintToCenter(CCSPlayerController player, string message, float dela
             }
         }
     }
-    
+
     public void SetPlayerAccount(CCSPlayerController player, int amount)
     {
         MyLogger.Info($"Set player money to {amount}");
@@ -235,7 +228,7 @@ public void PrintToCenter(CCSPlayerController player, string message, float dela
     {
         MyLogger.Info("Set team data");
         var configs = core.Config;
-        
+
         var firstLive = configs.LiveGame.First(t => t.DefaultTeam == "CT");
         var secondLive = configs.LiveGame.First(t => t.DefaultTeam == "T");
 
@@ -254,7 +247,7 @@ public void PrintToCenter(CCSPlayerController player, string message, float dela
         core.GameController.Teams.Team1 = new TeamData(team1.Id, team1.Name);
         core.GameController.Teams.Team2 = new TeamData(team2.Id, team2.Name);
     }
-    
+
     public void SetTeamName(TeamData ctTeam, TeamData tTeam)
     {
         Server.NextFrame(() =>
