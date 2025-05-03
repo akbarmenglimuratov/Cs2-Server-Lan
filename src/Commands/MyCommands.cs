@@ -76,7 +76,7 @@ public class MyCommands(BasicFaceitServer core)
 
     private void OnPrintStateCommand(CCSPlayerController? player, CommandInfo command)
     {
-        Console.WriteLine($"Current game state: {_game.GetCurrentGameState()}");
+        command.ReplyToCommand($"Current game state: {_game.GetCurrentGameState()}");
     }
     
     private void OnSetStateCommand(CCSPlayerController? player, CommandInfo command)
@@ -85,20 +85,25 @@ public class MyCommands(BasicFaceitServer core)
         switch (cmdArg)
         {
             case "prewarmup":
+                command.ReplyToCommand("Pre warmup state set");
                 _gameController.StartPreKnifeWarmup();
                 break;
             case "knife":
+                command.ReplyToCommand("Knife state set");
                 _gameController.StartKnife();
                 Server.ExecuteCommand("mp_restartgame 1");
                 break;
             case "postwarmup":
+                command.ReplyToCommand("Post warmup state set");
                 _gameController.StartPostKnifeWarmup();
                 break;
             case "live":
+                command.ReplyToCommand("Live state set");
                 _gameController.StartMatch();
                 Server.ExecuteCommand("mp_restartgame 1");
                 break;
             default:
+                command.ReplyToCommand("Incorrect command");
                 Console.WriteLine("Incorrect state");
                 return;
         }

@@ -2,17 +2,11 @@
 using BasicFaceitServer.Utils;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Utils;
 
 namespace BasicFaceitServer.Events;
 
 public class GameListener(BasicFaceitServer core)
 {
-    private readonly GameController _gameController = core.GameController;
-    
-    private Dictionary<string, List<CCSPlayerController>> _spectators = new Dictionary<string, List<CCSPlayerController>>();
-    
     public void Load()
     {
         core.RegisterListener<Listeners.OnServerHibernationUpdate>(OnServerHibernationUpdate);
@@ -27,14 +21,15 @@ public class GameListener(BasicFaceitServer core)
                 .ToList()
                 .ForEach(OnMatchBeingPlayedIn);
     }
-    
+
     private void OnMatchBeingPlayedIn(CCSPlayerController player)
     {
         var imgPath = Path.Combine(core.ModuleDirectory, "F9jJeIw3percent.png");
-        string organizer = $"<font class='fontSize-m' color='red'>Организатор турнира</font><br><img src='{imgPath}' width='64' height='64'/>";
+        string organizer =
+            $"<font class='fontSize-m' color='red'>Организатор турнира</font><br><img src='{imgPath}' width='64' height='64'/>";
         player.PrintToCenterHtml($"{organizer}");
     }
-    
+
     private void OnServerHibernationUpdate(bool isHibernating)
     {
         if (!isHibernating) return;
@@ -45,6 +40,11 @@ public class GameListener(BasicFaceitServer core)
 
     private void OnMapEnd()
     {
-        core.GamePhase = GamePhase.Sleeping;
+        Server.NextFrame(() =>
+        {
+            Server.PrintToChatAll("OnMapEnd");
+            core.GameController.StartNextMap();
+            core.GamePhase = GamePhase.Sleeping;
+        });
     }
 }

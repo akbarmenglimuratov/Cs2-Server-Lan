@@ -19,7 +19,6 @@ public class GameEvent(BasicFaceitServer core)
         core.RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
         core.RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
         core.RegisterEventHandler<EventRoundAnnounceMatchStart>(OnRoundAnnounceMatchStart);
-        core.RegisterEventHandler<EventMapShutdown>(OnMapShutdown);
         core.RegisterEventHandler<EventBombPlanted>(OnEventBombPlanted);
         core.RegisterEventHandler<EventPlayerDeath>(OnEventPlayerDeath);
     }
@@ -175,12 +174,6 @@ public class GameEvent(BasicFaceitServer core)
         }
 
         MyLogger.Info("End");
-        return HookResult.Continue;
-    }
-
-    private HookResult OnMapShutdown(EventMapShutdown @event, GameEventInfo info)
-    {
-        Server.PrintToChatAll(@event.EventName);
         return HookResult.Continue;
     }
 

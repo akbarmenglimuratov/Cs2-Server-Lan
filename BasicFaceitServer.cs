@@ -1,11 +1,9 @@
-using System.Net.Mime;
 using BasicFaceitServer.Commands;
 using BasicFaceitServer.Config;
 using BasicFaceitServer.Configs;
 using BasicFaceitServer.Events;
 using BasicFaceitServer.GameStates;
 using BasicFaceitServer.Utils;
-using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 
 namespace BasicFaceitServer;
@@ -25,6 +23,7 @@ public class BasicFaceitServer : BasePlugin
     public readonly GameListener GameListeners;
     public readonly GameUtils GameUtils;
 
+    public string? MapName = null;
     public GamePhase GamePhase = GamePhase.Sleeping;
     public MatchState MatchState = MatchState.Live;
     private readonly ConfigManager _configManager;
@@ -61,6 +60,8 @@ public class BasicFaceitServer : BasePlugin
         GameController.Load();
         Commands.Load();
         GameListeners.Load();
+
+        GameController.StartNextMap();
 
         MyLogger.Info("End plugin load");
     }

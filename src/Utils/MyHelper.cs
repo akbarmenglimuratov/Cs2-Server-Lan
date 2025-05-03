@@ -23,7 +23,7 @@ public class MyHelper(BasicFaceitServer core)
 
     public void PrintToChat(CCSPlayerController player, string message)
     {
-        var coloredText = $"{{green}}[{core.Config.Tournament.Host}]{{white}}: {message}";
+        var coloredText = $"{{green}}[{core.Config.Host}]{{white}}: {message}";
         player.PrintToChat(GetColoredText(coloredText));
     }
 
@@ -44,7 +44,7 @@ public class MyHelper(BasicFaceitServer core)
 
     public void PrintToChatAll(string message)
     {
-        var coloredText = $"{{green}}[{core.Config.Tournament.Host}]{{white}}: {message}";
+        var coloredText = $"{{green}}[{core.Config.Host}]{{white}}: {message}";
         Server.PrintToChatAll(GetColoredText(coloredText));
     }
 
@@ -107,7 +107,7 @@ public class MyHelper(BasicFaceitServer core)
         if (string.IsNullOrEmpty(playerIp))
             return CsTeam.Spectator;
 
-        var cabin = configs.Cabins.FirstOrDefault(c => c.IsActive && c.IpAddresses.Contains(playerIp));
+        var cabin = configs.Cabins.FirstOrDefault(c => c.IpAddresses.Contains(playerIp));
         if (cabin == null)
             return CsTeam.Spectator;
 
@@ -222,39 +222,6 @@ public class MyHelper(BasicFaceitServer core)
             : "weapon_knife_t";
 
         player.GiveNamedItem(knifeDesignName);
-    }
-
-    public void SetTeamDataFromConfigs()
-    {
-        MyLogger.Info("Set team data");
-        var configs = core.Config;
-
-        var firstLive = configs.LiveGame.First(t => t.DefaultTeam == "CT");
-        var secondLive = configs.LiveGame.First(t => t.DefaultTeam == "T");
-
-        var team1 = configs.Teams.First(t => t.Id == firstLive.TeamId);
-        var team2 = configs.Teams.First(t => t.Id == secondLive.TeamId);
-
-        SetTeams(team1, team2);
-
-        MyLogger.Info($"Team1 - {team1.Name}");
-        MyLogger.Info($"Team2 - {team2.Name}");
-        SetTeamName(core.GameController.Teams.Team1, core.GameController.Teams.Team2);
-    }
-
-    private void SetTeams(Team team1, Team team2)
-    {
-        core.GameController.Teams.Team1 = new TeamData(team1.Id, team1.Name);
-        core.GameController.Teams.Team2 = new TeamData(team2.Id, team2.Name);
-    }
-
-    private void SetTeamName(TeamData ctTeam, TeamData tTeam)
-    {
-        Server.NextFrame(() =>
-        {
-            Server.ExecuteCommand($"mp_teamname_1 {ctTeam.Name}");
-            Server.ExecuteCommand($"mp_teamname_2 {tTeam.Name}");
-        });
     }
 
     public CCSGameRules? GetGameRules()

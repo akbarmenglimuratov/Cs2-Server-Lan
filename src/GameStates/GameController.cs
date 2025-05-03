@@ -18,7 +18,6 @@ public class GameController(BasicFaceitServer core)
 
     public void Load()
     {
-        _helper.SetTeamDataFromConfigs();
     }
 
     public void StartPreKnifeWarmup()
@@ -129,5 +128,26 @@ public class GameController(BasicFaceitServer core)
 
             showTime -= 1.0f;
         }, TimerFlags.REPEAT);
+    }
+
+    public void StartNextMap()
+    {
+        if (core.MapName == null)
+        {
+            core.MapName = core.Config.Maps[0];
+            MyLogger.Debug($"Map is null. Start new map - {core.MapName}");
+            Server.ExecuteCommand($"map {core.MapName}");
+        }
+        else
+        {
+            var currentIndex = Array.IndexOf(core.Config.Maps, core.MapName);
+
+            if (currentIndex + 1 >= core.Config.Maps.Length) return;
+
+            core.MapName = core.Config.Maps[currentIndex + 1];
+
+            MyLogger.Debug($"Start next map - {core.MapName}");
+            Server.ExecuteCommand($"changelevel {core.MapName}");
+        }
     }
 }
